@@ -16,7 +16,32 @@ describe 'wireguard' do
       context 'with all defaults' do
         it { is_expected.to compile.with_all_deps }
         it { is_expected.to contain_file('/etc/wireguard') }
-        it { is_expected.to contain_package('wireguard-tools') }
+        it { is_expected.to contain_package('wireguard-tools').with_ensure('installed') }
+      end
+
+      context 'with custom package_name and package_ensure' do
+        let :params do
+          {
+            package_name: 'wireguard',
+            package_ensure: 'latest',
+          }
+        end
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_package('wireguard').with_ensure('latest').that_comes_before('File[/etc/wireguard]') }
+        it { is_expected.not_to contain_package('wireguard-tools') }
+      end
+
+      context 'with package_ensure absent' do
+        let :params do
+          {
+            package_ensure: 'absent',
+          }
+        end
+
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.to contain_package('wireguard-tools').with_ensure('absent') }
+        it { is_expected.to contain_file('/etc/wireguard').with_ensure('absent') }
       end
 
       context 'with interfaces defined' do

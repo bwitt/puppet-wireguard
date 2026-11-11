@@ -21,8 +21,8 @@ class wireguard (
   Array[Stdlib::IP::Address] $default_allowlist = ['fe80::/64', 'fd00::/8', '0.0.0.0/0'],
 ) {
   if $manage_package {
-    package { 'wireguard-tools':
-      ensure => 'installed',
+    package { $package_name:
+      ensure => $package_ensure,
     }
     Package[$package_name] -> File[$config_directory]
   }
